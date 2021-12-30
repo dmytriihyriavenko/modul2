@@ -13,8 +13,8 @@ public class ShoppingCart {
         ShoppingCart cart = new ShoppingCart();
         cart.addItem("Apple", 0.99, 5, ItemType.NEW);
         cart.addItem("Banana", 20.00, 4, ItemType.SECOND_FREE);
-        cart.addItem("A long piece of toilet paper", 17.20, 1, ItemType.SALE);
-        cart.addItem("Nails", 2.00, 500, ItemType.REGULAR);
+        cart.addItem("Juice", 17.20, 1, ItemType.SALE);
+        cart.addItem("Potatoes", 2.00, 500, ItemType.REGULAR);
         System.out.println(cart.formatTicket());
     }
     /**
@@ -82,45 +82,53 @@ public class ShoppingCart {
         }
         String[] footer = { String.valueOf(index),"","","","", MONEY.format(total) };
         // formatting table
+
         // column max length
         int[] width = new int[]{0,0,0,0,0,0};
         for (String[] line : lines)
-            for (int i = 0; i < line.length; i++)
-                width[i] = (int) Math.max(width[i], line[i].length());
-        for (int i = 0; i < header.length; i++)
-            width[i] = (int) Math.max(width[i], header[i].length());
-        for (int i = 0; i < footer.length; i++)
-            width[i] = (int) Math.max(width[i], footer[i].length());
+            adjustColum(width, line);
+             adjustColum(width, header);
+            adjustColum(width, footer);
+
         // line length
         int lineLength = width.length - 1;
         for (int w : width)
             lineLength += w;
         StringBuilder sb = new StringBuilder();
         // header
-        for (int i = 0; i < header.length; i++)
-            appendFormatted(sb, header[i], align[i], width[i]);
-        sb.append("\n");
+        appendFormattedLine(header, align, width, sb);
         // separator
-        for (int i = 0; i < lineLength; i++)
-            sb.append("-");
-        sb.append("\n");
+        separate(lineLength, sb);
         // lines
         for (String[] line : lines) {
-            for (int i = 0; i < line.length; i++)
-                appendFormatted(sb, line[i], align[i], width[i]);
-            sb.append("\n");
+            appendFormattedLine(line, align, width, sb);
         }
         if (lines.size() > 0) {
             // separator
-            for (int i = 0; i < lineLength; i++)
-                sb.append("-");
-            sb.append("\n");
+            separate(lineLength, sb);
         }
         // footer
-        for (int i = 0; i < footer.length; i++)
-            appendFormatted(sb, footer[i], align[i], width[i]);
+        appendFormattedLine(footer, align, width, sb);
         return sb.toString();
     }
+
+    private void separate(int lineLength, StringBuilder sb) {
+        for (int i = 0; i < lineLength; i++)
+            sb.append("-");
+        sb.append("\n");
+    }
+
+    private void appendFormattedLine(String[] header, int[] align, int[] width, StringBuilder sb) {
+        for (int i = 0; i < header.length; i++)
+            appendFormatted(sb, header[i], align[i], width[i]);
+        sb.append("\n");
+    }
+
+    private void adjustColum(int[] width, String[] line) {
+        for (int i = 0; i < line.length; i++)
+            width[i] = (int) Math.max(width[i], line[i].length());
+    }
+
     // --- private section -----------------------------------------------------
     private static final NumberFormat MONEY;
     static {
